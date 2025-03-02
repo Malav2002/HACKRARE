@@ -1,19 +1,15 @@
-import sys, os
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
-
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-
 from phrank.phrank import Phrank
 from phrank.phrank import utils as phrank_utils
 
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(_name_)
 CORS(app)
 
 # MongoDB Connection
@@ -116,8 +112,13 @@ def getFinal():
 
     leftover_phenotypes = list(set(overall_phenotypes)-set(input_phenotypes))
 
+    leftover_phenotypesTerm = []
 
-    return jsonify({"finalPhenotypes":leftover_phenotypes})
+    for i in leftover_phenotypes:
+        match = symptoms.find_one({"HPOId":i})
+        leftover_phenotypesTerm.append(match.get("HPOTerm"))
 
-if __name__ == '__main__':
+    return jsonify({"finalPhenotypes":leftover_phenotypesTerm})
+
+if _name_ == '_main_':
     app.run(host="0.0.0.0",port=8000)
