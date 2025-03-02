@@ -11,6 +11,8 @@ const DetailDiagnosis = () => {
             "disease":diseaseList,
             "phenotypesList":oldHpoIdList
         }
+        console.log(diseaseList)
+        console.log(oldHpoIdList)
         const resp  = axios.post("https://hackrare.onrender.com/getFinal",data);
         const leftoverTerm = resp.data
         console.log(leftoverTerm);

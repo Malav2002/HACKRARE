@@ -13,6 +13,10 @@ function ResultsPage() {
     navigate('/detail');
   } 
 
+  const goToHome = () => {
+    navigate('/');
+  }
+
   return (
     <div 
       className="min-vh-100 d-flex align-items-center justify-content-center py-5"
@@ -109,7 +113,7 @@ function ResultsPage() {
                       borderRadius: "6px",
                       border: "none"
                     }}
-                    onClick={navigate("/")}
+                    onClick={goToHome}
                   >
                     Back to Input Page
                   </button>

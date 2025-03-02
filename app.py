@@ -107,7 +107,8 @@ def getFinal():
     overall_phenotypes = []
     
     for i in input_disease:
-        disease_match = disease.find_one({"DiseaseName": i})    
+        print(i[1])
+        disease_match = disease.find_one({"DiseaseName": i[1]})    
         overall_phenotypes.extend(disease_match.get("HPO_Ids"))
 
     leftover_phenotypes = list(set(overall_phenotypes)-set(input_phenotypes))
