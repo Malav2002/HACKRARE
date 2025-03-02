@@ -51,7 +51,10 @@ const DetailDiagnosis = () => {
                 phenotypesList: oldHpoIdList,
                 newPhenotypes: finalSymptoms
             };
+            console.log("Final Symptoms:", finalSymptoms);
+            console.log(oldHpoIdList)
             const resp = await axios.post("https://hackrare.onrender.com/getDetailDiagnosis", data);
+            console.log(resp)
             console.log("Final Response:", resp.data);
             const output = resp.data
             navigate('/results', { state: { matchedDiseases: output.matched_diseases } })
