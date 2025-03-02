@@ -28,7 +28,7 @@ for disorder in root.findall(".//Disorder"):
             hpoid = hpo_element.find("HPOId").text if hpo_element.find("HPOId") is not None else "Unknown HPOId"
             hpoterm = hpo_element.find("HPOTerm").text if hpo_element.find("HPOTerm") is not None else "Unknown HPOTerm"
             
-            hpo_mapping[hpoid] = hpoterm
+            hpo_mapping[hpoid] = hpoterm.lower()
 
             hpo_ids.append(hpoid)
 

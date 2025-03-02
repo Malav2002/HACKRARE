@@ -1,29 +1,119 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from pymongo import MongoClient
+from dotenv import load_dotenv
+from phrank.phrank import Phrank
+from phrank.phrank import utils as phrank_utils
 
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  
+CORS(app)
 
-def match_phenotypes(phenotypes):
-   
-    diseases = [
-        {"name": "Disease A", "match_score": 85},
-        {"name": "Disease B", "match_score": 78},
-        {"name": "Disease C", "match_score": 60}
-    ]
-    return diseases
+# MongoDB Connection
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client["DiseaseDB"]  # Replace with your database name
 
-@app.route('/api/match', methods=['POST'])
-def match():
-    data = request.get_json()
-    phenotypes = data.get('patientSymptoms', [])
+disease = db["Diseases"]
+symptoms = db["HPO_Terms"]
+
+
+
+def getPhrankScore(userPhenotype,diseasePhenotype):
+    DAG="./phrank/demo/data/hpodag.txt"
+    DISEASE_TO_PHENO="./phrank/demo/data/disease_to_pheno.build127.txt"
+    DISEASE_TO_GENE="./phrank/demo/data/gene_to_disease.build127.txt"
+    p_hpo = Phrank(DAG, diseaseannotationsfile=DISEASE_TO_PHENO, diseasegenefile=DISEASE_TO_GENE)
+
+    # computing the similarity between two sets of phenotypes
+    matchscore = p_hpo.compute_phenotype_match(userPhenotype,diseasePhenotype)
+
+    return matchscore
+
+
+# 0 error code -> no data provided correctly from frontend
+# 1 error code -> the symptom provided is not valid one 
+# 2 error code -> success
+
+@app.route("/find-symptom", methods=["Post"])
+def getSymptomsFromUser():
+    data = request.json
+
+    if not data or "phenotypes" not in data:
+        return jsonify({"errorCode":0})
     
-    # Simulate disease matching
-    result = match_phenotypes(phenotypes)
+    symptom = data["phenotypes"]
+    symptom_match = symptoms.find_one({"HPOTerm": symptom.lower()})
 
-    # Send back a response with disease matches
-    return jsonify({"diseases": result})
+    if(not symptom_match):
+        return jsonify({"errorCode":1})
+
+    return jsonify({"errorCode":2,"id":symptom_match.get("HPOID")})
+
+@app.route("/find-disease", methods=["POST"])
+def getDisease():
+    data = request.json
+
+    if not data or "phenotypesList" not in data:
+        return jsonify({"errorCode": 0})
+    
+    input_phenotypes = set(data["phenotypesList"])  
+
+    userPhenotypes = list(input_phenotypes)
+    
+    query = {"HPO_Ids": {"$in": userPhenotypes}}
+    
+    matched_diseases = disease.find(query, {"_id": 0})
+
+    disease_scores = []
+
+    for d in matched_diseases:
+        disease_hpo = set(d.get("HPO_Ids", []))  
+        matched_hpos = disease_hpo.intersection(input_phenotypes)  
+        match_probability = (len(matched_hpos) / len(disease_hpo)) * 100 if disease_hpo else 0 
+        d["match_probability"] = match_probability
+        disease_scores.append(d)  
+
+    disease_scores.sort(key=lambda d: d["match_probability"], reverse=True)
+
+    s = min(10,len(disease_scores))
+
+    disease_scores = disease_scores[:s]
+
+    disease_phrank_score = []
+
+    for i in disease_scores:
+        diseasePhenotype = i["HPO_Ids"]
+        score = getPhrankScore(userPhenotypes,diseasePhenotype)
+        disease_phrank_score.append([score,i["DiseaseName"]])
+
+
+    disease_phrank_score.sort(reverse=True)
+
+    return jsonify({"errorCode": 2, "matched_diseases": disease_phrank_score[:min(s,3)]})
+
+@app.route("/getFinal",method=["POST"])
+def getFinal():
+    data = request.json
+
+    if not data or "phenotypesList" not in data:
+        return jsonify({"errorCode": 0})
+    
+    input_disease = data["disease"]
+    input_phenotypes = set(data["phenotypesList"])  
+    overall_phenotypes = []
+    
+    for i in input_disease:
+        disease_match = disease.find_one({"DiseaseName": i})    
+        overall_phenotypes.extend(disease_match.get("HPO_Ids"))
+
+    leftover_phenotypes = list(set(overall_phenotypes)-set(input_phenotypes))
+
+
+    return jsonify({"finalPhenotypes":leftover_phenotypes})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=8000)
