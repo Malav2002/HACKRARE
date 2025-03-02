@@ -95,7 +95,7 @@ def getDisease():
 
     return jsonify({"errorCode": 2, "matched_diseases": disease_phrank_score[:min(s,3)]})
 
-@app.route("/getFinal",method=["POST"])
+@app.route("/getFinal",methods=["POST"])
 def getFinal():
     data = request.json
 
