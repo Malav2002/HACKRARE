@@ -50,8 +50,8 @@ def getSymptomsFromUser():
 
     if(not symptom_match):
         return jsonify({"errorCode":1})
-
-    return jsonify({"errorCode":2,"id":symptom_match.get("HPOID")})
+    
+    return jsonify({"errorCode":2,"id":symptom_match.get("HPOId")})
 
 @app.route("/find-disease", methods=["POST"])
 def getDisease():
