@@ -97,7 +97,7 @@ function InputPage() {
                   style={{ 
                     fontSize: "2.2rem", 
                     fontWeight: "600",
-                    color: "#FFD700" // Gold color
+                    color: "#39B9A8" // Gold color
                   }}
                 >
                   Rare Disease Matcher
@@ -213,7 +213,7 @@ function InputPage() {
                 className="card-footer py-3 text-center"
                 style={{ backgroundColor: "#f8f9fb", borderTop: "1px solid #e8eef5" }}
               >
-                <small className="text-muted">
+                                <small className="text-muted">
                   This tool helps identify potential rare diseases based on HPO terms.
                 </small>
               </div>

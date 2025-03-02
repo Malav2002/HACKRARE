@@ -89,7 +89,7 @@ const DetailDiagnosis = () => {
                                     style={{ 
                                         fontSize: "2.2rem", 
                                         fontWeight: "600",
-                                        color: "#FFD700" // Gold color
+                                        color: "#39B9A8" // Gold color
                                     }}
                                 >
                                     Detail Diagnosis
