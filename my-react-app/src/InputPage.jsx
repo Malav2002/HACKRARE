@@ -100,7 +100,7 @@ function InputPage() {
                     color: "#39B9A8" // Gold color
                   }}
                 >
-                  Rare Disease Matcher
+                  MediCheck
                 </h1>
                 <p className="text-center mb-0 text-white-50">
                   Enter HPO terms to find matching rare diseases

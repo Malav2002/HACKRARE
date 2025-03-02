@@ -43,7 +43,7 @@ function ResultsPage() {
                     color: "#39B9A8" // Gold color
                   }}
                 >
-                  Rare Disease Matcher Results
+                  Diagnosis Result
                 </h1>
                 <p className="text-center mb-0 text-white-50">
                   Matched diseases based on your HPO terms
