@@ -132,15 +132,21 @@ def getDetailDiagnosis():
     oldPhenotypes = data["phenotypesList"]
     newPhenotypes = data["newPhenotypes"]
 
+    newId=[]
+
     for i in newPhenotypes:
         symptoms_match = symptoms.find_one({"HPOTerm":i.lower()})
+        newId.append(symptoms_match.get("HPOId"))
         oldPhenotypes.append(symptoms_match.get("HPOId"))
 
     payload = {"phenotypesList": oldPhenotypes}
 
     response = requests.post("https://hackrare.onrender.com/find-disease", json=payload)
     
-    return response.json()
+    data = response.json()
+    data['newPhenotypesId'] = newId
+
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8000)

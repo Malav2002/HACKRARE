@@ -1,13 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
 import { DiseaseContext } from "./DiseaseContext";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const DetailDiagnosis = () => {
-    const { diseaseList, oldHpoIdList } = useContext(DiseaseContext);
+    const { diseaseList, oldHpoIdList,setOldHpoIdList } = useContext(DiseaseContext);
     const [phenotypes, setPhenotypes] = useState([]); // Store phenotypes from API
     const [selectedSymptoms, setSelectedSymptoms] = useState({}); // Track user selections
     const [loading, setLoading] = useState(true); // Loading state
     const [submitting, setSubmitting] = useState(false); // Submission state
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const getData = async () => {
@@ -51,12 +54,10 @@ const DetailDiagnosis = () => {
                 phenotypesList: oldHpoIdList,
                 newPhenotypes: finalSymptoms
             };
-            console.log("Final Symptoms:", finalSymptoms);
-            console.log(oldHpoIdList)
-            const resp = await axios.post("https://hackrare.onrender.com/getDetailDiagnosis", data);
-            console.log(resp)
-            console.log("Final Response:", resp.data);
+            const resp = await axios.post("https://hackrare.onrender.com/getDetailDiagnosis", data)
             const output = resp.data
+            const newIDLIST = output.newPhenotypesId;
+            setOldHpoIdList((prev) => [...prev, ...newIDLIST]);
             navigate('/results', { state: { matchedDiseases: output.matched_diseases } })
         } catch (error) {
             console.error("Error submitting data:", error);
