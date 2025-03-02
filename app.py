@@ -1,8 +1,12 @@
-import os
+import sys, os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+
 from phrank.phrank import Phrank
 from phrank.phrank import utils as phrank_utils
 

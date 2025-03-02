@@ -1,0 +1,47 @@
+/* Custom Theme Colors */
+:root {
+  --primary-color: #6f42c1; /* Purple */
+  --secondary-color: #ffc107; /* Yellow */
+  --background-color: #f8f9fa; /* Light Gray */
+  --text-color: #343a40; /* Dark Gray */
+}
+
+/* Apply Custom Theme */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #5a32a3; /* Darker Purple */
+  border-color: #5a32a3;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.btn-secondary:hover {
+  background-color: #e0a800; /* Darker Yellow */
+  border-color: #e0a800;
+}
+
+/* Card Styles */
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+}
