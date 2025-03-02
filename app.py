@@ -54,8 +54,8 @@ def getSymptomsFromUser():
 
     if(not symptom_match):
         return jsonify({"errorCode":1})
-
-    return jsonify({"errorCode":2,"id":symptom_match.get("HPOID")})
+    
+    return jsonify({"errorCode":2,"id":symptom_match.get("HPOId")})
 
 @app.route("/find-disease", methods=["POST"])
 def getDisease():
@@ -99,7 +99,7 @@ def getDisease():
 
     return jsonify({"errorCode": 2, "matched_diseases": disease_phrank_score[:min(s,3)]})
 
-@app.route("/getFinal",method=["POST"])
+@app.route("/getFinal",methods=["POST"])
 def getFinal():
     data = request.json
 
@@ -120,4 +120,4 @@ def getFinal():
     return jsonify({"finalPhenotypes":leftover_phenotypes})
 
 if __name__ == '__main__':
-    app.run(debug=True,port=8000)
+    app.run(host="0.0.0.0",port=8000)
