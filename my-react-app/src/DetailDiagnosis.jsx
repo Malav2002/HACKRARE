@@ -53,6 +53,8 @@ const DetailDiagnosis = () => {
             };
             const resp = await axios.post("https://hackrare.onrender.com/getDetailDiagnosis", data);
             console.log("Final Response:", resp.data);
+            const output = resp.data
+            navigate('/results', { state: { matchedDiseases: output.matched_diseases } })
         } catch (error) {
             console.error("Error submitting data:", error);
         } finally {

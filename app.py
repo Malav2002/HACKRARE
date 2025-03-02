@@ -10,7 +10,7 @@ import requests
 
 load_dotenv()
 
-app = Flask(_name_)
+app = Flask(__name__)
 CORS(app)
 
 # MongoDB Connection
@@ -141,5 +141,5 @@ def getDetailDiagnosis():
     return requests.post("https://hackrare.onrender.com/find-disease", json=payload)
     
 
-if _name_ == '_main_':
+if __name__ == '_main_':
     app.run(host="0.0.0.0",port=8000)
