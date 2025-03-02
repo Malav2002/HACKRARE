@@ -57,7 +57,8 @@ function InputPage() {
       
       if (output.errorCode === 2) {
         navigate('/results', { state: { matchedDiseases: output.matched_diseases } });
-        setDiseaseList((prev)=>[...prev,output.matched_diseases]);
+        console.log(output.matched_diseases);
+        setDiseaseList((prev)=>[...prev,...output.matched_diseases]);
       } else {
         alert('No matching diseases found.');
       }

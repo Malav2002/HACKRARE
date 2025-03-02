@@ -5,11 +5,12 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from phrank.phrank import Phrank
 from phrank.phrank import utils as phrank_utils
+import requests
 
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(_name_)
 CORS(app)
 
 # MongoDB Connection
@@ -121,5 +122,24 @@ def getFinal():
 
     return jsonify({"finalPhenotypes":leftover_phenotypesTerm})
 
-if __name__ == '__main__':
+@app.route("/getDetailDiagnosis",methods=["POST"])
+def getDetailDiagnosis():
+    data = request.json
+
+    if not data or "phenotypesList" not in data:
+        return jsonify({"errorCode": 0})
+    
+    oldPhenotypes = data["phenotypesList"]
+    newPhenotypes = data["newPhenotypes"]
+
+    for i in newPhenotypes:
+        symptoms_match = symptoms.find_one({"HPOTerm":i.lower()})
+        oldPhenotypes.append(symptoms_match)
+
+    payload = {"phenotypesList": oldPhenotypes}
+
+    return requests.post("https://hackrare.onrender.com/find-disease", json=payload)
+    
+
+if _name_ == '_main_':
     app.run(host="0.0.0.0",port=8000)
