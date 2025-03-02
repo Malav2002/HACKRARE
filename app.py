@@ -9,7 +9,7 @@ from phrank.phrank import utils as phrank_utils
 
 load_dotenv()
 
-app = Flask(_name_)
+app = Flask(__name__)
 CORS(app)
 
 # MongoDB Connection
