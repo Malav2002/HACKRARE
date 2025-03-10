@@ -4,3 +4,4 @@ pandas
 flask-cors
 pymongo
 dotenv
+requests

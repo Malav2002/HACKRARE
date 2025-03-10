@@ -4,12 +4,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
-
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-
 from phrank.phrank import Phrank
 from phrank.phrank import utils as phrank_utils
+import requests
 
 
 load_dotenv()
@@ -112,7 +109,8 @@ def getFinal():
     overall_phenotypes = []
     
     for i in input_disease:
-        disease_match = disease.find_one({"DiseaseName": i})    
+        print(i[1])
+        disease_match = disease.find_one({"DiseaseName": i[1]})    
         overall_phenotypes.extend(disease_match.get("HPO_Ids"))
 
     leftover_phenotypes = list(set(overall_phenotypes)-set(input_phenotypes))
@@ -126,9 +124,33 @@ def getFinal():
     return jsonify({"finalPhenotypes":leftover_phenotypesTerm})
 
 
-@app.route("/",methods=["POST"])
-def testServer():
-    return jsonify({"message":"Server is up and running"})
+
+@app.route("/getDetailDiagnosis",methods=["POST"])
+def getDetailDiagnosis():
+    data = request.json
+
+    if not data or "phenotypesList" not in data:
+        return jsonify({"errorCode": 0})
+    
+    oldPhenotypes = data["phenotypesList"]
+    newPhenotypes = data["newPhenotypes"]
+
+    newId=[]
+
+    for i in newPhenotypes:
+        symptoms_match = symptoms.find_one({"HPOTerm":i.lower()})
+        newId.append(symptoms_match.get("HPOId"))
+        oldPhenotypes.append(symptoms_match.get("HPOId"))
+
+    payload = {"phenotypesList": oldPhenotypes}
+
+    response = requests.post("https://hackrare.onrender.com/find-disease", json=payload)
+    
+    data = response.json()
+    data['newPhenotypesId'] = newId
+
+    return jsonify(data)
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8000)
