@@ -1,3 +1,4 @@
+
 import sys, os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -116,8 +117,18 @@ def getFinal():
 
     leftover_phenotypes = list(set(overall_phenotypes)-set(input_phenotypes))
 
+    leftover_phenotypesTerm = []
 
-    return jsonify({"finalPhenotypes":leftover_phenotypes})
+    for i in leftover_phenotypes:
+        match = symptoms.find_one({"HPOId":i})
+        leftover_phenotypesTerm.append(match.get("HPOTerm"))
+
+    return jsonify({"finalPhenotypes":leftover_phenotypesTerm})
+
+
+@app.route("/",methods=["POST"])
+def testServer():
+    return jsonify({"message":"Server is up and running"})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8000)
